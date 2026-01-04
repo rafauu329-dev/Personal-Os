@@ -284,7 +284,7 @@ const App = {
             </div>`;
             })
             .join("")
-        : `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:20px; border:2px dashed #ccc; border-radius:8px; letter-spacing:1px; background: #fafafa;">
+        : `<div style="text-align:center; color:var(--text-main); font-size:0.8rem; padding:20px; border:2px dashed var(--border-color); border-radius:8px; letter-spacing:1px; background: #fafafa;">
           ยังไม่มีเป้าหมาย
        </div>`;
 
@@ -404,7 +404,7 @@ const App = {
     </div>
 </div>
 
-        <div class="paper-card" style="border:var(--border-std); box-shadow:var(--shadow-hard);">
+        <div class="paper-card" style="border:var(--border-std);border-top: 8px solid var(--color-green); box-shadow:var(--shadow-hard);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <div class="section-tag" style="background:var(--color-green); color:#000; border:var(--border-std);">Habits</div>
                 <button class="btn-action" style="padding:2px 8px; font-size:0.7rem; border:var(--border-std);" onclick="App.navigateTo('tools')"> เพิ่ม + </button>
@@ -425,7 +425,7 @@ const App = {
 </div>
 </div>
 
-        <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-top: 8px solid var(--text-muted); background: #fdfbf7; box-shadow:var(--shadow-hard); min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-top: 8px solid var(--text-muted); background: #fdfbf7; box-shadow:var(--shadow-hard); min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 30px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="section-tag" style="background:var(--text-muted); color:#fff; border:var(--border-std);">System Pulse</div>
                 <div style="font-size:0.7rem; font-weight:800; font-family:monospace; color:var(--color-green);">● SYSTEM_STABLE // 100%</div>
