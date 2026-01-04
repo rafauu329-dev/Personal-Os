@@ -1,28 +1,30 @@
-// บังคับหยุดเสียงทุกกรณีเมื่อหน้าเว็บถูกซ่อน (ดักไว้บรรทัดแรกของไฟล์)
+// ระบบทำลายเสียงทิ้งทันทีเมื่อพับหน้าจอ (Force Audio Kill)
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    // 1. หยุด Audio Element ทุกตัว
+    console.log("CRITICAL_HALT: Destroying all audio elements.");
+
+    // 1. ค้นหาทุกอย่างที่ผลิตเสียงได้
     const audios = document.querySelectorAll("audio");
-    audios.forEach((a) => {
-      a.pause();
-      a.currentTime = 0;
+
+    audios.forEach((audio) => {
+      audio.pause(); // หยุดเสียง
+      audio.src = ""; // ล้าง Source ทิ้ง (อันนี้แหละที่จะทำให้เสียงหายขาด)
+      audio.load(); // บังคับให้โหลดค่าว่าง
+      audio.remove(); // ลบแท็กออกจาก HTML ไปเลย
     });
 
-    // 2. ถ้ามึงใช้ Web Audio API (บาง Library ใช้ตัวนี้)
+    // 2. ปิด Audio Context (ถ้ามีระบบจัดการเสียงขั้นสูง)
     if (window.AudioContext || window.webkitAudioContext) {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      audioCtx.suspend();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx.close();
     }
 
-    // 3. อัปเดตสถานะปุ่มใน UI ให้ดูว่าปิดแล้ว
-    const soundBtns = document.querySelectorAll(".btn-sound");
-    soundBtns.forEach((btn) => {
+    // 3. รีเซ็ต UI ปุ่มให้กลับมาสถานะปกติ
+    document.querySelectorAll(".btn-sound").forEach((btn) => {
       btn.classList.remove("active");
-      btn.style.background = ""; // รีเซ็ตสีปุ่ม
-      btn.innerHTML = "🔈"; // หรือไอคอนปิดเสียงของมึง
+      btn.innerHTML = btn.dataset.icon || "🔈";
+      btn.style.boxShadow = ""; // เอา Glow ออก
     });
-
-    console.warn("CRITICAL_HALT: All background audio terminated by system.");
   }
 });
 
@@ -3000,25 +3002,6 @@ const App = {
   },
 };
 
-// ระบบตัดเสียงอัตโนมัติเมื่อซ่อนหน้าจอ หรือปิดแอป (สำหรับ iPad/Mobile)
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    // เมื่อหน้าจอถูกซ่อน (สลับแอป/ล็อคจอ) ให้หาเสียงที่กำลังเล่นแล้วหยุดมันซะ
-    const activeAudios = document.querySelectorAll("audio");
-    activeAudios.forEach((audio) => {
-      audio.pause(); // สั่งหยุดเสียง
-      audio.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น (ถ้าอยากให้เริ่มใหม่ตอนกลับมา)
-    });
-
-    // ถ้ามึงใช้ฟังก์ชันคุมปุ่มใน App ให้สั่งอัปเดตสถานะปุ่มด้วย
-    document.querySelectorAll(".btn-sound").forEach((btn) => {
-      btn.classList.remove("active");
-      btn.innerHTML = btn.dataset.icon || "🔈"; // เปลี่ยนไอคอนกลับเป็นปิด
-    });
-
-    console.log("SYSTEM_LOG: Background Audio Terminated.");
-  }
-});
 
 document.addEventListener("DOMContentLoaded", () => {
   App.init();
