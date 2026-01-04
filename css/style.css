@@ -1703,3 +1703,51 @@ textarea.jor-input {
     box-shadow: 3px 3px 0px var(--border-color);
     background: var(--bg-soft) !important;
 }
+
+/* =========================================
+   DASHBOARD RESPONSIVE (1073px - 1263px)
+   ========================================= */
+
+@media (max-width: 1280px) {
+    .dashboard-grid-v2 {
+        /* ปรับให้เหลือ 2 คอลัมน์หลักเพื่อให้ก้อนเหลืองด้านบนดูใหญ่เหมือนในภาพ */
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px !important;
+    }
+
+    /* บังคับให้ Mission Progress และ นาฬิกา อยู่แถวบนสุดคู่กัน */
+    .dashboard-grid-v2 > .paper-card:nth-child(1),
+    .dashboard-grid-v2 > .paper-card:nth-child(2) {
+        grid-column: span 1 !important;
+        min-height: 200px !important;
+    }
+
+    /* บังคับให้ Quote และ Absolute Focus อยู่แถวที่สอง */
+    .dashboard-grid-v2 > .paper-card:nth-child(3) {
+        grid-column: span 1 !important; /* Quote */
+    }
+
+    .dashboard-grid-v2 > .paper-card:nth-child(4) {
+        grid-column: span 1 !important; /* Absolute Focus บีบให้เท่ากับ Quote */
+        border-left-width: 8px !important; /* ลดความหนาเส้นชมพูลงนิดนึงให้ดูคลีน */
+    }
+
+    /* ปรับแต่งปุ่มและตัวอักษรข้างใน Absolute Focus ให้ Compact ตามภาพ */
+    .dashboard-grid-v2 > .paper-card:nth-child(4) .btn-action {
+        margin-top: 10px !important;
+        padding: 5px 15px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ปรับระยะขอบหน้าจอสำหรับ iPad/Tablet */
+@media (max-width: 1024px) {
+    .main-content {
+        margin: 10px !important;
+        height: calc(100vh - 20px) !important;
+    }
+
+    #content-area {
+        padding: 15px !important;
+    }
+}

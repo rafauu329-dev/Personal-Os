@@ -387,7 +387,7 @@ const App = {
             </div>
         </div>
 
-        <div class="paper-card" style="grid-column: span 1.5; border:var(--border-std); border-left:12px solid var(--color-pink); box-shadow:var(--shadow-hard);">
+        <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-left:12px solid var(--color-pink); box-shadow:var(--shadow-hard);">
     <div class="section-tag" style="background:var(--color-pink); color:#fff; border:var(--border-std);">ABSOLUTE FOCUS</div>
     <div style="padding:10px 0; text-align:center;">
         ${
@@ -418,7 +418,7 @@ const App = {
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
         <div class="section-tag" style="background:var(--color-purple); color:#fff; border:var(--border-std);">Goals Progress</div>
         <button class="btn-action" style="padding:2px 8px; font-size:0.7rem; border:var(--border-std); background:var(--bg-soft); color:var(--text-main); font-weight:800;" onclick="App.navigateTo('goals')">
-            แก้ไข / ดู
+            เพิ่ม +
         </button>
     </div>
     <div style="margin-top:5px;">
