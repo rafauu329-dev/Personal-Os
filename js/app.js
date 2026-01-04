@@ -385,7 +385,7 @@ const App = {
             </div>
         </div>
 
-        <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-left:12px solid var(--color-pink); box-shadow:var(--shadow-hard);">
+        <div class="paper-card" style="grid-column: span 1.5; border:var(--border-std); border-left:12px solid var(--color-pink); box-shadow:var(--shadow-hard);">
     <div class="section-tag" style="background:var(--color-pink); color:#fff; border:var(--border-std);">ABSOLUTE FOCUS</div>
     <div style="padding:10px 0; text-align:center;">
         ${
