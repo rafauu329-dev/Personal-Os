@@ -1,3 +1,31 @@
+// บังคับหยุดเสียงทุกกรณีเมื่อหน้าเว็บถูกซ่อน (ดักไว้บรรทัดแรกของไฟล์)
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    // 1. หยุด Audio Element ทุกตัว
+    const audios = document.querySelectorAll("audio");
+    audios.forEach((a) => {
+      a.pause();
+      a.currentTime = 0;
+    });
+
+    // 2. ถ้ามึงใช้ Web Audio API (บาง Library ใช้ตัวนี้)
+    if (window.AudioContext || window.webkitAudioContext) {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtx.suspend();
+    }
+
+    // 3. อัปเดตสถานะปุ่มใน UI ให้ดูว่าปิดแล้ว
+    const soundBtns = document.querySelectorAll(".btn-sound");
+    soundBtns.forEach((btn) => {
+      btn.classList.remove("active");
+      btn.style.background = ""; // รีเซ็ตสีปุ่ม
+      btn.innerHTML = "🔈"; // หรือไอคอนปิดเสียงของมึง
+    });
+
+    console.warn("CRITICAL_HALT: All background audio terminated by system.");
+  }
+});
+
 const App = {
   currentPage: "home",
 
@@ -245,16 +273,20 @@ const App = {
             .map((g) => {
               const prog = GoalSystem.calculateProgress(g);
               return `
-                <div style="margin-bottom:12px; cursor:pointer;" onclick="App.navigateTo('goals')">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:700;">
-                        <span>${g.title}</span>
-                        <span>${prog}%</span>
-                    </div>
-                    <div class="p-bar"><div class="p-fill" style="width:${prog}%"></div></div>
-                </div>`;
+            <div style="margin-bottom:12px; cursor:pointer;" onclick="App.navigateTo('goals')">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:700;">
+                    <span style="color:var(--text-main);">${g.title}</span>
+                    <span style="color:var(--color-purple);">${prog}%</span>
+                </div>
+                <div class="p-bar" style="background:#eee; border:1px solid #ddd;">
+                    <div class="p-fill" style="width:${prog}%; background:var(--color-purple);"></div>
+                </div>
+            </div>`;
             })
             .join("")
-        : `<div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">- ยังไม่มีเป้าหมาย -</div>`;
+        : `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:20px; border:2px dashed #ccc; border-radius:8px; letter-spacing:1px; background: #fafafa;">
+          ยังไม่มีเป้าหมาย
+       </div>`;
 
     // Habits Today
     const todayKey = now.toLocaleDateString("th-TH");
@@ -287,7 +319,7 @@ const App = {
                 </div>`;
             })
             .join("")
-        : `<div style="text-align:center; padding:10px; border:2px dashed var(--border-color); border-radius:8px;">ยังไม่มีนิสัย</div>`;
+        : `<div style="text-align:center; padding:10px; border:2px dashed var(--border-color); border-radius:8px;"> ไม่มีข้อมูล </div>`;
 
     // Money Today
     const moneyToday =
@@ -332,7 +364,7 @@ const App = {
                 </div>
                 <div class="section-tag" style="background:#000; color:#fff; border:var(--border-std);">WEEK ${
                   timeData.weekNumber
-                }</div>
+                } / 52 </div>
             </div>
             <div style="margin-top:15px; padding-top:15px; border-top:2px dashed var(--border-color);">
                 <div class="p-bar" style="height:12px; background:rgba(255,255,255,0.5); border:var(--border-std);">
@@ -354,31 +386,44 @@ const App = {
         </div>
 
         <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-left:12px solid var(--color-pink); box-shadow:var(--shadow-hard);">
-            <div class="section-tag" style="background:var(--color-pink); color:#fff; border:var(--border-std);">ABSOLUTE FOCUS</div>
-            <div style="padding:10px 0; text-align:center;">
-                <div style="font-size:2rem; font-weight:900; line-height:1.3;">"${
-                  todayData.focus || "ยังไม่มีเป้าหมายวันนี้..."
-                }"</div>
-                ${
-                  !todayData.focus
-                    ? `<button class="btn-action" style="margin-top:15px; border:var(--border-std);" onclick="App.navigateTo('today')">กำหนดงานสำคัญ</button>`
-                    : ""
-                }
-            </div>
-        </div>
+    <div class="section-tag" style="background:var(--color-pink); color:#fff; border:var(--border-std);">ABSOLUTE FOCUS</div>
+    <div style="padding:10px 0; text-align:center;">
+        ${
+          todayData.focus
+            ? `<div style="font-size:2rem; font-weight:900; line-height:1.3;">"${todayData.focus}"</div>`
+            : `
+              <div style="padding: 20px; border: 3px dashed #ccc; border-radius: 12px; background: rgba(0,0,0,0.02);">
+                  <div style="font-size:1.2rem; font-weight:800; color:#aaa; letter-spacing:1px;"></div>
+                  <div style="font-size:0.8rem; color:#bbb; margin-top:5px;">ยังไม่มีเป้าหมายวันนี้...</div>
+                  <button class="btn-action" style="margin-top:15px; border:var(--border-std); background:var(--color-yellow); font-weight:900;" onclick="App.navigateTo('today')">
+                      + กำหนดงานสำคัญ
+                  </button>
+              </div>
+            `
+        }
+    </div>
+</div>
 
         <div class="paper-card" style="border:var(--border-std); box-shadow:var(--shadow-hard);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <div class="section-tag" style="background:var(--color-green); color:#000; border:var(--border-std);">Habits</div>
-                <button class="btn-action" style="padding:2px 8px; font-size:0.7rem; border:var(--border-std);" onclick="App.navigateTo('tools')">EDIT</button>
+                <button class="btn-action" style="padding:2px 8px; font-size:0.7rem; border:var(--border-std);" onclick="App.navigateTo('tools')"> เพิ่ม + </button>
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">${habitsHTML}</div>
         </div>
 
-        <div class="paper-card" style="border:var(--border-std); border-top: 8px solid var(--color-purple); box-shadow:var(--shadow-hard);">
-            <div class="section-tag" style="background:var(--color-purple); color:#fff; border:var(--border-std);">Goals Progress</div>
-            <div style="margin-top:5px;">${goalsHTML}</div>
-        </div>
+       <div class="paper-card" style="border:var(--border-std); border-top: 8px solid var(--color-purple); background: #fff; color: var(--text-main); box-shadow:var(--shadow-hard);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div class="section-tag" style="background:var(--color-purple); color:#fff; border:var(--border-std);">Goals Progress</div>
+        <button class="btn-action" style="padding:2px 8px; font-size:0.7rem; border:var(--border-std); background:var(--bg-soft); color:var(--text-main); font-weight:800;" onclick="App.navigateTo('goals')">
+            แก้ไข / ดู
+        </button>
+    </div>
+    <div style="margin-top:5px;">
+        ${goalsHTML}
+    </div>
+</div>
+</div>
 
         <div class="paper-card" style="grid-column: span 2; border:var(--border-std); border-top: 8px solid var(--text-muted); background: #fdfbf7; box-shadow:var(--shadow-hard); min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2955,26 +3000,24 @@ const App = {
   },
 };
 
-
-
 // ระบบตัดเสียงอัตโนมัติเมื่อซ่อนหน้าจอ หรือปิดแอป (สำหรับ iPad/Mobile)
 document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        // เมื่อหน้าจอถูกซ่อน (สลับแอป/ล็อคจอ) ให้หาเสียงที่กำลังเล่นแล้วหยุดมันซะ
-        const activeAudios = document.querySelectorAll('audio');
-        activeAudios.forEach(audio => {
-            audio.pause(); // สั่งหยุดเสียง
-            audio.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น (ถ้าอยากให้เริ่มใหม่ตอนกลับมา)
-        });
+  if (document.hidden) {
+    // เมื่อหน้าจอถูกซ่อน (สลับแอป/ล็อคจอ) ให้หาเสียงที่กำลังเล่นแล้วหยุดมันซะ
+    const activeAudios = document.querySelectorAll("audio");
+    activeAudios.forEach((audio) => {
+      audio.pause(); // สั่งหยุดเสียง
+      audio.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น (ถ้าอยากให้เริ่มใหม่ตอนกลับมา)
+    });
 
-        // ถ้ามึงใช้ฟังก์ชันคุมปุ่มใน App ให้สั่งอัปเดตสถานะปุ่มด้วย
-        document.querySelectorAll('.btn-sound').forEach(btn => {
-            btn.classList.remove('active');
-            btn.innerHTML = btn.dataset.icon || '🔈'; // เปลี่ยนไอคอนกลับเป็นปิด
-        });
+    // ถ้ามึงใช้ฟังก์ชันคุมปุ่มใน App ให้สั่งอัปเดตสถานะปุ่มด้วย
+    document.querySelectorAll(".btn-sound").forEach((btn) => {
+      btn.classList.remove("active");
+      btn.innerHTML = btn.dataset.icon || "🔈"; // เปลี่ยนไอคอนกลับเป็นปิด
+    });
 
-        console.log("SYSTEM_LOG: Background Audio Terminated.");
-    }
+    console.log("SYSTEM_LOG: Background Audio Terminated.");
+  }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
