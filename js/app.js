@@ -502,7 +502,7 @@ const App = {
            .join("")}
        </div>
        <button class="u-text-xs u-text-muted u-mt-sm u-w-full u-text-center u-cursor-pointer u-no-border u-bg-transparent" onclick="App.navigateTo('goals')">ดูเป้าหมายทั้งหมด ▶</button>`
-        : `<div class="u-text-center u-text-muted u-p-md"> <span class="u-text-lg u-cursor-pointer u-text-main" onclick="App.handleAddGoal()">+ เริ่มสร้างเป้าหมายใหม่</span></div>`;
+        : `<div class="u-text-center u-text-muted u-p-md"> <span class="u-text-lg u-cursor-pointer" onclick="App.handleAddGoal()">+ เริ่มสร้างเป้าหมายใหม่</span></div>`;
 
     // C. HABITS LOGIC (FIXED: checkHabit -> toggleHabit)
     const habitsList = appState.tools?.habits || [];
@@ -758,8 +758,8 @@ const App = {
                         </div>
                     `
                     : `
-                        <div class="u-text-center u-text-muted" style="opacity:0.5; padding:15px; border:2px dashed #ddd; border-radius:8px;">
-                            <div class="u-text-xs">No active item selected</div>
+                        <div class="u-text-center u-text-muted" style="padding:15px;  border-radius:8px;">
+                            <div class="u-text-lg u-p-lg " style="cursor:pointer;"> ไม่มีอะไรเลยคร้าบบบ </div>
                         </div>
                     `;
 
