@@ -64,6 +64,13 @@ const App = {
     tempNote: "",
   },
 
+  scheduleState: {
+    view: "daily",
+    selectedDate: new Date(),
+    viewMonth: new Date(),
+    draggedItem: null,
+  },
+
   // 👇 1. เพิ่มคลังคำคมตรงนี้ (อยากได้แนวอิสลามหรืออื่นๆ ใส่เพิ่มตรงนี้ได้เลย)
   quotes: [
     // --- หมวดอิสลาม (Islamic Reminder) ---
@@ -253,6 +260,7 @@ const App = {
     const navItems = document.querySelectorAll(".nav-item");
     const pages = [
       "home",
+      "schedule",
       "goals",
       "today",
       "library",
@@ -283,6 +291,7 @@ const App = {
     // Reset Title
     const titles = {
       home: "Home",
+      schedule: "PLANNER",
       goals: "Goals",
       today: "Focus",
       library: "Library",
@@ -295,6 +304,9 @@ const App = {
     switch (pageName) {
       case "home":
         this.renderDashboard(contentArea);
+        break;
+      case "schedule":
+        this.renderSchedule(contentArea);
         break;
       case "goals":
         this.renderGoals(contentArea);
@@ -595,6 +607,50 @@ const App = {
                       timeData.progress.day
                     }%;"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="paper-card quote-manifesto hover-card" onclick="App.navigateTo('schedule')">
+             <div class="manifesto-tape"></div>
+             <div class="manifesto-header">
+                <span class="manifesto-tag section-tag bg-black">UPCOMING</span>
+                <div class="manifesto-hole"></div>
+            </div>
+            <div class="manifesto-body" style="padding:15px; justify-content:flex-start;">
+                ${(() => {
+                  const todayStr = new Date().toISOString().split("T")[0];
+                  const upcoming = (appState.schedule || [])
+                    .filter((e) => e.date >= todayStr)
+                    .sort((a, b) =>
+                      (a.date + a.timeStart).localeCompare(b.date + b.timeStart)
+                    )
+                    .slice(0, 3);
+
+                  if (upcoming.length === 0)
+                    return `<div class="u-text-center u-text-muted">วันนี้ว่าง... สบายจัง 💤</div>`;
+
+                  return upcoming
+                    .map(
+                      (e) => `
+                        <div style="border-left:4px solid ${
+                          e.important ? "var(--color-red)" : "#ccc"
+                        }; padding-left:10px; margin-bottom:8px;">
+                            <div class="u-flex-between">
+                                <span class="u-font-bold u-text-sm">${
+                                  e.timeStart
+                                }</span>
+                                <span class="u-text-xs u-text-muted">${
+                                  e.date === todayStr ? "TODAY" : e.date
+                                }</span>
+                            </div>
+                            <div class="u-text-main">${e.title} ${
+                        e.important ? "🔥" : ""
+                      }</div>
+                        </div>
+                    `
+                    )
+                    .join("");
+                })()}
             </div>
         </div>
 
@@ -932,8 +988,423 @@ const App = {
   },
 
   // ============================================================
-  // 4. TODAY VIEW (FOCUS MODE)
+  // 10. ULTIMATE SCHEDULE (COMPLETE VERSION)
   // ============================================================
+
+  renderSchedule(container) {
+    if (!appState.schedule) appState.schedule = [];
+
+    const selected = this.scheduleState.selectedDate;
+    const viewMonth = this.scheduleState.viewMonth;
+
+    // ✅ ป้องกันปัญหา Timezone: ใช้ Local Date ในการสร้าง Key สำหรับดึงข้อมูล
+    const year = selected.getFullYear();
+    const month = String(selected.getMonth() + 1).padStart(2, "0");
+    const day = String(selected.getDate()).padStart(2, "0");
+    const isoDate = `${year}-${month}-${day}`;
+
+    const dateStr = selected.toLocaleDateString("th-TH", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    // --- ส่วนประกอบ UI: หัวข้อและปุ่มควบคุมวันที่ ---
+    const headerHTML = `
+      <div class="u-flex-between u-flex-align-center u-mb-lg sched-header-responsive">
+          <div class="u-flex-align-center">
+             <div class="section-tag bg-black" style="margin:0; font-size:1rem; padding:8px 12px;">SCHEDULE</div>
+          </div>
+          <div class="sched-date-control">
+             <button class="sched-nav-btn prev" onclick="App.changeScheduleDate(-1)">◀</button>
+             <div class="sched-current-date">${dateStr}</div>
+             <button class="sched-nav-btn next" onclick="App.changeScheduleDate(1)">▶</button>
+          </div>
+      </div>
+    `;
+
+    // --- ส่วนประกอบ UI: ปฏิทินรายเดือน (Full Calendar) ---
+    const renderFullCalendar = () => {
+      const firstDay = new Date(
+        viewMonth.getFullYear(),
+        viewMonth.getMonth(),
+        1
+      );
+      const lastDay = new Date(
+        viewMonth.getFullYear(),
+        viewMonth.getMonth() + 1,
+        0
+      );
+      const prevLastDay = new Date(
+        viewMonth.getFullYear(),
+        viewMonth.getMonth(),
+        0
+      );
+
+      const monthYearStr = viewMonth.toLocaleDateString("th-TH", {
+        month: "long",
+        year: "numeric",
+      });
+
+      let daysHtml = "";
+      // เติมวันจากเดือนก่อนหน้า (สีจาง)
+      for (let x = firstDay.getDay(); x > 0; x--) {
+        daysHtml += `<div class="cal-day prev-month">${
+          prevLastDay.getDate() - x + 1
+        }</div>`;
+      }
+      // เติมวันในเดือนปัจจุบัน
+      for (let i = 1; i <= lastDay.getDate(); i++) {
+        const dKey = `${viewMonth.getFullYear()}-${String(
+          viewMonth.getMonth() + 1
+        ).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+        const isSelected = dKey === isoDate;
+        const hasEvent = appState.schedule.some((e) => e.date === dKey);
+        const isToday = dKey === new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
+
+        daysHtml += `
+            <div class="cal-day ${isSelected ? "active" : ""} ${
+          hasEvent ? "has-event" : ""
+        } ${isToday ? "is-today" : ""}"
+                 onclick="App.setScheduleDate('${new Date(
+                   viewMonth.getFullYear(),
+                   viewMonth.getMonth(),
+                   i
+                 ).toISOString()}')">
+                ${i}
+            </div>`;
+      }
+
+      return `
+        <div class="paper-card full-calendar">
+            <div class="u-flex-between u-mb-md u-flex-align-center">
+                <div class="u-font-black u-text-lg">${monthYearStr}</div>
+                <div class="u-flex u-gap-xs">
+                    <button class="btn-action btn-sm" onclick="App.changeViewMonth(-1)">◀</button>
+                    <button class="btn-action btn-sm" onclick="App.changeViewMonth(1)">▶</button>
+                </div>
+            </div>
+            <div class="cal-grid-header">
+                <div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div>
+            </div>
+            <div class="cal-grid-body">${daysHtml}</div>
+        </div>`;
+    };
+
+    // --- ส่วนประกอบ UI: แผนผังกิจกรรมประจำวัน (Timeline) ---
+    const timeBlocks = [
+      {
+        id: "morning",
+        label: "MORNING",
+        sub: "05:00 - 12:00",
+        color: "var(--color-yellow)",
+      },
+      {
+        id: "afternoon",
+        label: "AFTERNOON",
+        sub: "12:00 - 17:00",
+        color: "var(--color-orange)",
+      },
+      {
+        id: "evening",
+        label: "EVENING",
+        sub: "17:00 - 22:00",
+        color: "var(--color-blue)",
+      },
+      {
+        id: "sleep",
+        label: "SLEEP",
+        sub: "22:00 - 05:00",
+        color: "var(--color-purple)",
+      },
+    ];
+
+    const currentEvents = appState.schedule.filter((e) => e.date === isoDate);
+    const timelineHTML = timeBlocks
+      .map((block) => {
+        const evts = currentEvents
+          .filter((e) => e.period === block.id)
+          .sort((a, b) => a.timeStart.localeCompare(b.timeStart));
+
+        return `
+        <div class="sched-block-zone" ondrop="App.handleDrop(event, '${
+          block.id
+        }', '${isoDate}')" ondragover="App.allowDrop(event)">
+            <div class="sched-block-header" style="background:${block.color}">
+                <span>${block.label}</span>
+                <span style="font-size:0.7rem; opacity:0.8;">${block.sub}</span>
+            </div>
+            <div class="sched-block-body">
+                ${
+                  evts.length
+                    ? evts
+                        .map(
+                          (evt) => `
+                    <div class="sched-event-card"
+                         style="border-left-color: ${
+                           evt.important
+                             ? "var(--color-red)"
+                             : "var(--color-blue)"
+                         }"
+                         draggable="true" ondragstart="App.handleDragStart(event, '${
+                           evt.id
+                         }')">
+                        <div class="u-flex-between u-mb-xs">
+                            <span class="sched-time-badge">${evt.timeStart} - ${
+                            evt.timeEnd
+                          }</span>
+                        </div>
+                        <div class="sched-title">${evt.title}</div>
+                        <button class="sched-edit-btn" onclick="event.stopPropagation(); App.handleEditEventModal('${
+                          evt.id
+                        }')">✎</button>
+                        <button class="sched-del-btn" onclick="event.stopPropagation(); App.deleteEvent('${
+                          evt.id
+                        }')">&times;</button>
+                    </div>
+                `
+                        )
+                        .join("")
+                    : '<div class="sched-placeholder">ลากสติกเกอร์มาวางที่นี่</div>'
+                }
+            </div>
+        </div>`;
+      })
+      .join("");
+
+    // --- รวมโครงสร้างทั้งหมดลง Container ---
+    container.innerHTML = `
+        ${headerHTML}
+        <div class="sched-new-layout">
+            <div class="sched-calendar-area">
+                ${renderFullCalendar()}
+                <div class="sched-dock">
+                    <div class="u-font-black u-mb-sm u-text-center">STICKERS</div>
+                    <div class="sched-stickers-row">
+                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'ประชุม', 'work')">💼 ประชุม</div>
+                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'Coding', 'work')">💻 Coding</div>
+                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'ออกกำลัง', 'health')">💪 Workout</div>
+                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'กินข้าว', 'life')">🍽️ กินข้าว</div>
+                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'อ่านหนังสือ', 'life')">📚 อ่านหนังสือ</div>
+                    </div>
+                    <button class="btn-action add-task" onclick="App.handleAddEventModal('${isoDate}')">+ พิมพ์เพิ่มเอง</button>
+                </div>
+            </div>
+            <div class="sched-timeline-area">
+                ${timelineHTML}
+            </div>
+        </div>
+    `;
+  },
+
+  // --- ฟังก์ชันช่วยเหลือ (Helpers) ---
+
+  changeViewMonth(val) {
+    this.scheduleState.viewMonth.setMonth(
+      this.scheduleState.viewMonth.getMonth() + val
+    );
+    this.renderSchedule(document.getElementById("content-area"));
+  },
+
+  changeScheduleDate(days) {
+    this.scheduleState.selectedDate.setDate(
+      this.scheduleState.selectedDate.getDate() + days
+    );
+    // อัปเดต viewMonth ให้ตรงกับวันที่เลือกเผื่อข้ามเดือน
+    this.scheduleState.viewMonth = new Date(
+      this.scheduleState.selectedDate.getFullYear(),
+      this.scheduleState.selectedDate.getMonth(),
+      1
+    );
+    this.renderSchedule(document.getElementById("content-area"));
+  },
+
+  setScheduleDate(isoString) {
+    this.scheduleState.selectedDate = new Date(isoString);
+    this.renderSchedule(document.getElementById("content-area"));
+  },
+
+  // --- ระบบจัดการ Task (Add / Edit / Delete) ---
+
+  handleAddEventModal(dateStr, presetTitle = "", presetType = "work") {
+    const html = `
+        <div class="u-flex-col u-gap-md">
+            <div><label class="u-font-bold u-text-sm">ชื่อกิจกรรม</label><input type="text" id="evt-title" class="input-std" value="${presetTitle}" autocomplete="off"></div>
+            <div class="u-flex u-gap-sm">
+                <div style="flex:1"><label class="u-text-sm">เริ่ม</label><input type="time" id="evt-start" class="input-std" value="09:00"></div>
+                <div style="flex:1"><label class="u-text-sm">ถึง</label><input type="time" id="evt-end" class="input-std" value="10:00"></div>
+            </div>
+            <div>
+                <label class="u-font-bold u-text-sm">ประเภท</label>
+                <select id="evt-type" class="input-std">
+                    <option value="work" ${
+                      presetType === "work" ? "selected" : ""
+                    }>Work (งาน)</option>
+                    <option value="health" ${
+                      presetType === "health" ? "selected" : ""
+                    }>Health (สุขภาพ)</option>
+                    <option value="deen" ${
+                      presetType === "deen" ? "selected" : ""
+                    }>Deen (ศาสนา)</option>
+                    <option value="life" ${
+                      presetType === "life" ? "selected" : ""
+                    }>Life (ชีวิต)</option>
+                </select>
+            </div>
+             <div class="u-mt-sm">
+                <label class="u-flex-align-center u-cursor-pointer">
+                    <input type="checkbox" id="evt-imp" style="width:18px; height:18px; accent-color:var(--color-red);">
+                    <span class="u-ml-xs u-font-bold u-text-danger">🔥 สำคัญมาก</span>
+                </label>
+            </div>
+        </div>`;
+
+    this.openModal("เพิ่มกิจกรรม", html, () => {
+      const title = document.getElementById("evt-title").value;
+      if (!title) {
+        this.showToast("กรุณากรอกชื่อกิจกรรม", "error");
+        return false;
+      }
+
+      const start = document.getElementById("evt-start").value;
+      const hour = parseInt(start.split(":")[0]);
+      let period = "morning";
+      if (hour >= 12) period = "afternoon";
+      if (hour >= 17) period = "evening";
+      if (hour >= 22 || hour < 5) period = "sleep";
+
+      appState.schedule.push({
+        id: Date.now().toString(),
+        date: dateStr,
+        title,
+        timeStart: start,
+        timeEnd: document.getElementById("evt-end").value,
+        type: document.getElementById("evt-type").value,
+        period: period,
+        important: document.getElementById("evt-imp").checked,
+      });
+      saveState();
+      this.renderSchedule(document.getElementById("content-area"));
+      return true;
+    });
+  },
+
+  handleEditEventModal(id) {
+    const evt = appState.schedule.find((e) => e.id === id);
+    if (!evt) return;
+
+    const html = `
+      <div class="u-flex-col u-gap-md">
+          <div><label class="u-font-bold u-text-sm">ชื่อกิจกรรม</label><input type="text" id="edit-evt-title" class="input-std" value="${
+            evt.title
+          }"></div>
+          <div class="u-flex u-gap-sm">
+              <div style="flex:1"><label class="u-text-sm">เริ่ม</label><input type="time" id="edit-evt-start" class="input-std" value="${
+                evt.timeStart
+              }"></div>
+              <div style="flex:1"><label class="u-text-sm">ถึง</label><input type="time" id="edit-evt-end" class="input-std" value="${
+                evt.timeEnd
+              }"></div>
+          </div>
+          <div>
+              <label class="u-font-bold u-text-sm">ประเภท</label>
+              <select id="edit-evt-type" class="input-std">
+                  <option value="work" ${
+                    evt.type === "work" ? "selected" : ""
+                  }>Work</option>
+                  <option value="health" ${
+                    evt.type === "health" ? "selected" : ""
+                  }>Health</option>
+                  <option value="deen" ${
+                    evt.type === "deen" ? "selected" : ""
+                  }>Deen</option>
+                  <option value="life" ${
+                    evt.type === "life" ? "selected" : ""
+                  }>Life</option>
+              </select>
+          </div>
+          <div class="u-mt-sm">
+              <label class="u-flex-align-center u-cursor-pointer">
+                  <input type="checkbox" id="edit-evt-imp" style="width:18px; height:18px;" ${
+                    evt.important ? "checked" : ""
+                  }>
+                  <span class="u-ml-xs u-font-bold u-text-danger">🔥 สำคัญมาก</span>
+              </label>
+          </div>
+      </div>`;
+
+    this.openModal("แก้ไขกิจกรรม", html, () => {
+      const title = document.getElementById("edit-evt-title").value;
+      if (!title) return false;
+
+      const start = document.getElementById("edit-evt-start").value;
+      const hour = parseInt(start.split(":")[0]);
+      let period = "morning";
+      if (hour >= 12) period = "afternoon";
+      if (hour >= 17) period = "evening";
+      if (hour >= 22 || hour < 5) period = "sleep";
+
+      evt.title = title;
+      evt.timeStart = start;
+      evt.timeEnd = document.getElementById("edit-evt-end").value;
+      evt.type = document.getElementById("edit-evt-type").value;
+      evt.period = period;
+      evt.important = document.getElementById("edit-evt-imp").checked;
+
+      saveState();
+      this.renderSchedule(document.getElementById("content-area"));
+      this.showToast("แก้ไขงานเรียบร้อย", "success");
+      return true;
+    });
+  },
+
+  deleteEvent(id) {
+    this.openModal("ลบรายการ?", "คุณต้องการลบกิจกรรมนี้ใช่ไหม?", () => {
+      appState.schedule = appState.schedule.filter((e) => e.id !== id);
+      saveState();
+      this.renderSchedule(document.getElementById("content-area"));
+      this.showToast("ลบเรียบร้อย", "info");
+      return true;
+    });
+  },
+
+  // --- ระบบ Drag & Drop ---
+
+  allowDrop(ev) {
+    ev.preventDefault();
+  },
+
+  handleDragStart(ev, id) {
+    ev.dataTransfer.setData("text/plain", JSON.stringify({ type: "move", id }));
+  },
+
+  handleStickerDragStart(ev, title, type) {
+    ev.dataTransfer.setData(
+      "text/plain",
+      JSON.stringify({ type: "new", title, category: type })
+    );
+  },
+
+  handleDrop(ev, periodId, dateStr) {
+    ev.preventDefault();
+    try {
+      const data = JSON.parse(ev.dataTransfer.getData("text/plain"));
+      if (data.type === "new") {
+        this.handleAddEventModal(dateStr, data.title, data.category);
+      } else if (data.type === "move") {
+        const item = appState.schedule.find((e) => e.id === data.id);
+        if (item) {
+          item.period = periodId;
+          item.date = dateStr;
+          saveState();
+          this.renderSchedule(document.getElementById("content-area"));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  },
 
   // ============================================================
   // 4. TODAY VIEW (FOCUS COMMAND CENTER)
@@ -2883,12 +3354,12 @@ const App = {
       date: new Date(), // ใช้วันเวลาปัจจุบัน
       type: type,
       duration: parseInt(dur),
-      cals: parseInt(cal) || 0 // ถ้าไม่กรอกแคล ให้เป็น 0
+      cals: parseInt(cal) || 0, // ถ้าไม่กรอกแคล ให้เป็น 0
     };
 
     // 4. บันทึกลง State
     if (!appState.tools.exercise.logs) {
-        appState.tools.exercise.logs = [];
+      appState.tools.exercise.logs = [];
     }
     appState.tools.exercise.logs.push(newLog);
 
