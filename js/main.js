@@ -20,6 +20,7 @@ import * as JournalModule from "./modules/journal.js";
 import * as ExerciseModule from "./modules/exercise.js";
 import * as ReviewsModule from "./modules/reviews.js";
 import * as SettingsModule from "./modules/settings.js";
+import { MOCK_DATA } from "./mockdata.js";
 
 // 3. Construct Global App
 const App = {
@@ -35,7 +36,6 @@ const App = {
   // ใน main.js ส่วน init()
   init() {
     try {
-
       const setAppHeight = () =>
         document.documentElement.style.setProperty(
           "--app-height",
@@ -79,7 +79,6 @@ const App = {
       }
     });
   },
-
 
   // --- Sidebar & Mobile Menu Logic ---
   bindEvents() {
@@ -275,9 +274,8 @@ const App = {
 
   // --- Bridge for Tools Hub (Opening specific tool pages) ---
   openTool(toolName) {
-
     this.currentPage = "tools";
-    
+
     const container = document.getElementById("content-area");
     const titleEl = document.getElementById("page-title");
     window.scrollTo(0, 0);
@@ -321,6 +319,7 @@ const App = {
   ...ExerciseModule,
   ...ReviewsModule,
   ...SettingsModule,
+  loadMockData: SettingsModule.loadMockData,
 };
 
 // 5. Global Event: Stop Audio when tab is hidden to save resources

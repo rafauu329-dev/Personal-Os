@@ -1,5 +1,6 @@
 import { appState, saveState } from "../state.js";
 import { openModal, showToast } from "../utils.js";
+import { MOCK_DATA } from "../mockdata.js";
 
 /* =========================================
    SETTINGS (Original UI from app.js)
@@ -8,6 +9,12 @@ import { openModal, showToast } from "../utils.js";
 export function renderSettings(container) {
   container.innerHTML = `
           <div class="settings-container" style="max-width:600px; margin:0 auto;">
+              <div class="paper-card u-mb-lg" style="border-left: 5px solid var(--color-blue);">
+                  <div class="section-tag bg-blue">Quick Start</div>
+                  <p class="u-text-sm u-mb-md"> ต้องการทดลองระบบแบบมีข้อมูลครบทุกหน้าไหม? </p>
+                  <button class="btn-main u-w-full" onclick="App.loadMockData()"> 🚀 โหลดข้อมูลตัวอย่าง (Load Demo) </button>
+              </div>
+
               <div class="paper-card u-mb-lg">
                   <div class="section-tag"> Data Management </div>
                   <p class="u-text-sm u-mb-md"> ดาวน์โหลดข้อมูลเก็บไว้ (Backup) </p>
@@ -23,6 +30,21 @@ export function renderSettings(container) {
                     <button class="btn-danger" style="padding:10px 20px; border-radius:6px; cursor:pointer;" onclick="App.hardReset()"> RESET ALL</button>
               </div>
           </div>`;
+}
+
+// 3. เพิ่มฟังก์ชัน Load Mock Data
+export function loadMockData() {
+  openModal(
+    "โหลดข้อมูลทดสอบ?",
+    "ข้อมูลปัจจุบันของคุณจะถูกลบและแทนที่ด้วยข้อมูลตัวอย่าง",
+    () => {
+      // บันทึกลง LocalStorage โดยตรงเพื่อให้ระบบโหลดใหม่
+      localStorage.setItem("lifeDashboardState", JSON.stringify(MOCK_DATA));
+      showToast("โหลดข้อมูลตัวอย่างเรียบร้อย! กำลังรีเฟรช...", "success");
+      setTimeout(() => window.location.reload(), 1000);
+      return true;
+    }
+  );
 }
 
 // --- Interactive Functions ---
