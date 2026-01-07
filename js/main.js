@@ -180,7 +180,7 @@ const App = {
     if (titleEl) {
       const titles = {
         home: "HOME",
-        schedule: "PLANNER",
+        schedule: "SCHEDULE",
         goals: "GOALS",
         today: "FOCUS",
         library: "LIBRARY",

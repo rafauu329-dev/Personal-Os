@@ -34,7 +34,8 @@ export function renderSchedule(container) {
   const headerHTML = `
       <div class="u-flex-between u-flex-align-center u-mb-lg sched-header-responsive">
           <div class="u-flex-align-center">
-             <div class="section-tag bg-black" style="margin:0; font-size:1rem; padding:8px 12px;">SCHEDULE</div>
+             <div class="section-tag bg-main" style="margin:0; font-size:1rem; padding:8px 12px;"> PLANNER </div>
+
           </div>
           <div class="sched-date-control">
              <button class="sched-nav-btn prev" onclick="App.changeScheduleDate(-1)">◀</button>
@@ -108,8 +109,8 @@ export function renderSchedule(container) {
       color: "var(--color-blue)",
     },
     {
-      id: "sleep",
-      label: "SLEEP",
+      id: "night",
+      label: "NIGHT",
       sub: "22:00 - 05:00",
       color: "var(--color-purple)",
     },
@@ -176,11 +177,10 @@ export function renderSchedule(container) {
             <div class="u-font-black u-mb-sm u-text-center">STICKERS (แตะเพื่อเลือก)</div>
             <div class="sched-stickers-row">
                 ${[
-                  { title: "ประชุม", type: "work", icon: "💼" },
-                  { title: "Coding", type: "work", icon: "💻" },
-                  { title: "ออกกำลัง", type: "health", icon: "💪" },
-                  { title: "กินข้าว", type: "life", icon: "🍽️" },
-                  { title: "อ่านหนังสือ", type: "life", icon: "📚" },
+                  { title: "ประชุม", type: "work", icon: "" },
+                  { title: "Coding", type: "work", icon: "" },
+                  { title: "ออกกำลัง", type: "health", icon: "" },
+                  { title: "อ่านหนังสือ", type: "life", icon: "" },
                 ]
                   .map(
                     (p) => `
@@ -201,8 +201,9 @@ export function renderSchedule(container) {
                 `
                   )
                   .join("")}
+
             </div>
-            <button class="btn-action add-task" onclick="App.handleAddEventModal('${isoDate}')">+ พิมพ์เพิ่มเอง</button>
+            <button class="btn-action add-task" style="align-items: flex-end;" onclick="App.handleAddEventModal('${isoDate}')">+ พิมพ์เพิ่มเอง</button>
         </div>
     `;
 
@@ -296,7 +297,7 @@ export function handleAddEventModal(
     let period = "morning";
     if (hour >= 12) period = "afternoon";
     if (hour >= 17) period = "evening";
-    if (hour >= 22 || hour < 5) period = "sleep";
+    if (hour >= 22 || hour < 5) period = "night";
 
     appState.schedule.push({
       id: Date.now().toString(),
@@ -367,7 +368,7 @@ export function handleEditEventModal(id) {
     let period = "morning";
     if (hour >= 12) period = "afternoon";
     if (hour >= 17) period = "evening";
-    if (hour >= 22 || hour < 5) period = "sleep";
+    if (hour >= 22 || hour < 5) period = "night";
 
     evt.title = title;
     evt.timeStart = start;
