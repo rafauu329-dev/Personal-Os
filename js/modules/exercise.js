@@ -170,9 +170,22 @@ export function renderExercise(container) {
                   .join("")}
             </div>
             <div class="ex-entry-grid">
-                <input type="text" id="ex-type" class="input-std" placeholder="รายการ...">
-                <input type="number" id="ex-dur" class="input-std" placeholder="นาที">
-                <input type="number" id="ex-cal" class="input-std" placeholder="Cal">
+                <div class="input-group">
+    <div class="field">
+        <label for="ex-type">ประเภทกิจกรรม</label>
+        <input type="text" id="ex-type" class="input-std" placeholder="เช่น เวท, วิ่ง, ว่ายน้ำ">
+    </div>
+
+    <div class="field">
+        <label for="ex-dur">ระยะเวลา (นาที)</label>
+        <input type="number" id="ex-dur" class="input-std" placeholder="นาที">
+    </div>
+
+    <div class="field">
+        <label for="ex-cal">พลังงานที่เผาผลาญ (แคล)</label>
+        <input type="number" id="ex-cal" class="input-std" placeholder="Cal">
+    </div>
+</div>
             </div>
             <button class="btn-action u-w-full bg-red" onclick="App.addEx()">บันทึกกิจกรรม</button>
         </div>
