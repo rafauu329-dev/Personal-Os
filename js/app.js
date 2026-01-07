@@ -69,6 +69,7 @@ const App = {
     selectedDate: new Date(),
     viewMonth: new Date(),
     draggedItem: null,
+    selectedSticker: null,
   },
 
   // 👇 1. เพิ่มคลังคำคมตรงนี้ (อยากได้แนวอิสลามหรืออื่นๆ ใส่เพิ่มตรงนี้ได้เลย)
@@ -987,6 +988,34 @@ const App = {
     `;
   },
 
+  // --- ฟังก์ชันรองรับระบบสัมผัส (Touch Support) ---
+
+  // 1. เมื่อจิ้มสติกเกอร์
+  handleStickerTap(title, type) {
+    // ถ้าจิ้มตัวเดิม -> ยกเลิกการเลือก
+    if (this.scheduleState.selectedSticker?.title === title) {
+      this.scheduleState.selectedSticker = null;
+    } else {
+      // ถ้าจิ้มตัวใหม่ -> เลือกตัวนั้น
+      this.scheduleState.selectedSticker = { title, type };
+      this.showToast(`เลือก: ${title} (แตะที่ช่องเวลาเพื่อวาง)`);
+    }
+    // รีเฟรชหน้าจอเพื่อโชว์สีเหลือง
+    this.renderSchedule(document.getElementById("content-area"));
+  },
+
+  // 2. เมื่อจิ้มช่องเวลา (Zone)
+  handleZoneTap(periodId, dateStr) {
+    // ถ้ามีสติกเกอร์ถูกเลือกอยู่ -> ให้เปิดหน้าต่างเพิ่มงานทันที
+    if (this.scheduleState.selectedSticker) {
+      const sticker = this.scheduleState.selectedSticker;
+      this.handleAddEventModal(dateStr, sticker.title, sticker.type);
+
+      // วางเสร็จแล้ว จะล้างค่าเลือก หรือคงไว้ก็ได้ (ที่นี่ล้างค่าเพื่อให้ Clean)
+      this.scheduleState.selectedSticker = null;
+      this.renderSchedule(document.getElementById("content-area"));
+    }
+  },
   // ============================================================
   // 10. ULTIMATE SCHEDULE (COMPLETE VERSION)
   // ============================================================
@@ -997,7 +1026,6 @@ const App = {
     const selected = this.scheduleState.selectedDate;
     const viewMonth = this.scheduleState.viewMonth;
 
-    // ✅ ป้องกันปัญหา Timezone: ใช้ Local Date ในการสร้าง Key สำหรับดึงข้อมูล
     const year = selected.getFullYear();
     const month = String(selected.getMonth() + 1).padStart(2, "0");
     const day = String(selected.getDate()).padStart(2, "0");
@@ -1010,7 +1038,7 @@ const App = {
       year: "numeric",
     });
 
-    // --- ส่วนประกอบ UI: หัวข้อและปุ่มควบคุมวันที่ ---
+    // Header
     const headerHTML = `
       <div class="u-flex-between u-flex-align-center u-mb-lg sched-header-responsive">
           <div class="u-flex-align-center">
@@ -1024,8 +1052,10 @@ const App = {
       </div>
     `;
 
-    // --- ส่วนประกอบ UI: ปฏิทินรายเดือน (Full Calendar) ---
+    // Calendar logic (ย่อส่วนนี้เพื่อความกระชับ ให้ใช้โค้ดเดิมในส่วน renderFullCalendar)
     const renderFullCalendar = () => {
+      // ... (ใช้โค้ด renderFullCalendar เดิมของคุณได้เลยครับ ไม่ต้องแก้) ...
+      // แต่ถ้าต้องการโค้ดเต็มๆ แจ้งได้ครับ
       const firstDay = new Date(
         viewMonth.getFullYear(),
         viewMonth.getMonth(),
@@ -1041,58 +1071,39 @@ const App = {
         viewMonth.getMonth(),
         0
       );
-
       const monthYearStr = viewMonth.toLocaleDateString("th-TH", {
         month: "long",
         year: "numeric",
       });
-
       let daysHtml = "";
-      // เติมวันจากเดือนก่อนหน้า (สีจาง)
-      for (let x = firstDay.getDay(); x > 0; x--) {
+      for (let x = firstDay.getDay(); x > 0; x--)
         daysHtml += `<div class="cal-day prev-month">${
           prevLastDay.getDate() - x + 1
         }</div>`;
-      }
-      // เติมวันในเดือนปัจจุบัน
       for (let i = 1; i <= lastDay.getDate(); i++) {
         const dKey = `${viewMonth.getFullYear()}-${String(
           viewMonth.getMonth() + 1
         ).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
         const isSelected = dKey === isoDate;
         const hasEvent = appState.schedule.some((e) => e.date === dKey);
-        const isToday = dKey === new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
-
-        daysHtml += `
-            <div class="cal-day ${isSelected ? "active" : ""} ${
+        const isToday = dKey === new Date().toLocaleDateString("en-CA");
+        daysHtml += `<div class="cal-day ${isSelected ? "active" : ""} ${
           hasEvent ? "has-event" : ""
-        } ${isToday ? "is-today" : ""}"
-                 onclick="App.setScheduleDate('${new Date(
-                   viewMonth.getFullYear(),
-                   viewMonth.getMonth(),
-                   i
-                 ).toISOString()}')">
-                ${i}
-            </div>`;
+        } ${
+          isToday ? "is-today" : ""
+        }" onclick="App.setScheduleDate('${new Date(
+          viewMonth.getFullYear(),
+          viewMonth.getMonth(),
+          i
+        ).toISOString()}')">${i}</div>`;
       }
-
-      return `
-        <div class="paper-card full-calendar">
-            <div class="u-flex-between u-mb-md u-flex-align-center">
-                <div class="u-font-black u-text-lg">${monthYearStr}</div>
-                <div class="u-flex u-gap-xs">
-                    <button class="btn-action btn-sm" onclick="App.changeViewMonth(-1)">◀</button>
-                    <button class="btn-action btn-sm" onclick="App.changeViewMonth(1)">▶</button>
-                </div>
-            </div>
-            <div class="cal-grid-header">
-                <div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div>
-            </div>
-            <div class="cal-grid-body">${daysHtml}</div>
-        </div>`;
+      return `<div class="paper-card full-calendar">
+            <div class="u-flex-between u-mb-md u-flex-align-center"><div class="u-font-black u-text-lg">${monthYearStr}</div><div class="u-flex u-gap-xs"><button class="btn-action btn-sm" onclick="App.changeViewMonth(-1)">◀</button><button class="btn-action btn-sm" onclick="App.changeViewMonth(1)">▶</button></div></div>
+            <div class="cal-grid-header"><div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div></div>
+            <div class="cal-grid-body">${daysHtml}</div></div>`;
     };
 
-    // --- ส่วนประกอบ UI: แผนผังกิจกรรมประจำวัน (Timeline) ---
+    // Timeline Logic (เพิ่ม onclick ที่ Zone)
     const timeBlocks = [
       {
         id: "morning",
@@ -1127,10 +1138,13 @@ const App = {
           .filter((e) => e.period === block.id)
           .sort((a, b) => a.timeStart.localeCompare(b.timeStart));
 
+        // 👇 เพิ่ม onclick="App.handleZoneTap(...)" ตรงนี้
         return `
-        <div class="sched-block-zone" ondrop="App.handleDrop(event, '${
-          block.id
-        }', '${isoDate}')" ondragover="App.allowDrop(event)">
+        <div class="sched-block-zone"
+             ondrop="App.handleDrop(event, '${block.id}', '${isoDate}')"
+             ondragover="App.allowDrop(event)"
+             onclick="App.handleZoneTap('${block.id}', '${isoDate}')">
+
             <div class="sched-block-header" style="background:${block.color}">
                 <span>${block.label}</span>
                 <span style="font-size:0.7rem; opacity:0.8;">${block.sub}</span>
@@ -1141,21 +1155,21 @@ const App = {
                     ? evts
                         .map(
                           (evt) => `
-                    <div class="sched-event-card"
+                    <div class="sched-event-card" draggable="true" ondragstart="App.handleDragStart(event, '${
+                      evt.id
+                    }')"
                          style="border-left-color: ${
                            evt.important
                              ? "var(--color-red)"
                              : "var(--color-blue)"
-                         }"
-                         draggable="true" ondragstart="App.handleDragStart(event, '${
-                           evt.id
-                         }')">
+                         }">
                         <div class="u-flex-between u-mb-xs">
                             <span class="sched-time-badge">${evt.timeStart} - ${
                             evt.timeEnd
                           }</span>
                         </div>
                         <div class="sched-title">${evt.title}</div>
+
                         <button class="sched-edit-btn" onclick="event.stopPropagation(); App.handleEditEventModal('${
                           evt.id
                         }')">✎</button>
@@ -1166,30 +1180,55 @@ const App = {
                 `
                         )
                         .join("")
-                    : '<div class="sched-placeholder">ลากสติกเกอร์มาวางที่นี่</div>'
+                    : '<div class="sched-placeholder">แตะสติกเกอร์แล้วแตะที่นี่เพื่อวาง</div>'
                 }
             </div>
         </div>`;
       })
       .join("");
 
-    // --- รวมโครงสร้างทั้งหมดลง Container ---
+    // Stickers Logic (เพิ่ม onclick และ class is-selected)
+    const stickersHTML = `
+        <div class="sched-dock">
+            <div class="u-font-black u-mb-sm u-text-center">STICKERS (แตะเพื่อเลือก)</div>
+            <div class="sched-stickers-row">
+                ${[
+                  { title: "ประชุม", type: "work", icon: "💼" },
+                  { title: "Coding", type: "work", icon: "💻" },
+                  { title: "ออกกำลัง", type: "health", icon: "💪" },
+                  { title: "กินข้าว", type: "life", icon: "🍽️" },
+                  { title: "อ่านหนังสือ", type: "life", icon: "📚" },
+                ]
+                  .map(
+                    (p) => `
+                    <div class="sched-sticker ${
+                      this.scheduleState.selectedSticker?.title === p.title
+                        ? "is-selected"
+                        : ""
+                    }"
+                         draggable="true"
+                         ondragstart="App.handleStickerDragStart(event, '${
+                           p.title
+                         }', '${p.type}')"
+                         onclick="App.handleStickerTap('${p.title}', '${
+                      p.type
+                    }')">
+                        <span>${p.icon}</span> <span>${p.title}</span>
+                    </div>
+                `
+                  )
+                  .join("")}
+            </div>
+            <button class="btn-action add-task" onclick="App.handleAddEventModal('${isoDate}')">+ พิมพ์เพิ่มเอง</button>
+        </div>
+    `;
+
     container.innerHTML = `
         ${headerHTML}
         <div class="sched-new-layout">
             <div class="sched-calendar-area">
                 ${renderFullCalendar()}
-                <div class="sched-dock">
-                    <div class="u-font-black u-mb-sm u-text-center">STICKERS</div>
-                    <div class="sched-stickers-row">
-                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'ประชุม', 'work')">💼 ประชุม</div>
-                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'Coding', 'work')">💻 Coding</div>
-                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'ออกกำลัง', 'health')">💪 Workout</div>
-                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'กินข้าว', 'life')">🍽️ กินข้าว</div>
-                        <div class="sched-sticker" draggable="true" ondragstart="App.handleStickerDragStart(event, 'อ่านหนังสือ', 'life')">📚 อ่านหนังสือ</div>
-                    </div>
-                    <button class="btn-action add-task" onclick="App.handleAddEventModal('${isoDate}')">+ พิมพ์เพิ่มเอง</button>
-                </div>
+                ${stickersHTML}
             </div>
             <div class="sched-timeline-area">
                 ${timelineHTML}
