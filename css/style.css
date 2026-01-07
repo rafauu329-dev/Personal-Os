@@ -1152,7 +1152,7 @@ body {
 }
 .ex-preset-chip:hover { background: var(--color-red); color: #fff; border-color: var(--color-red); transform: translateY(-1px); }
 
-.ex-entry-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+.ex-entry-grid { display: grid;  gap: 10px; margin-bottom: 15px; }
 
 .ex-intensity-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--bg-soft); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); }
 .ex-radio-group { display: flex; gap: 15px; }
