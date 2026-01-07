@@ -1,8 +1,10 @@
+import { appState, saveState } from "../state.js";
+
 /* =========================================
    GOAL SYSTEM LOGIC
    ========================================= */
 
-const GoalSystem = {
+export const GoalSystem = {
   // --- Utility ---
   generateId: () =>
     Date.now().toString(36) + Math.random().toString(36).substr(2),

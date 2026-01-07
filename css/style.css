@@ -6,6 +6,7 @@
     --bg-main: #e1b12c;
     --bg-surface: #fdfbf7;
     --bg-soft: #efefef;
+    --app-height: 100vh;
 
     /* The Deep Pop Palette */
     --color-purple: #9b59b6;
@@ -59,6 +60,8 @@ body {
     overflow: hidden;
     background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1.5px, transparent 1.5px);
     background-size: 20px 20px;
+    height: 100vh; /* Fallback */
+    height: var(--app-height);
 }
 
 ::-webkit-scrollbar {

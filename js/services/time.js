@@ -2,7 +2,7 @@
    TIME SYSTEM & CALCULATIONS
    ========================================= */
 
-const TimeSystem = {
+export const TimeSystem = {
   current: {
     date: new Date(),
     dayPart: "",
