@@ -2759,20 +2759,26 @@ body {
 
 
 /* =========================================
-   14. ULTIMATE SCHEDULE STYLES (PRODUCTION READY)
-========================================= */
+   14. ULTIMATE SCHEDULE STYLES (REVAMPED)
+   ========================================= */
 
-/* Layout พื้นฐาน */
+/* --- 1. Global Schedule Layout --- */
 .sched-new-layout {
     display: grid;
-    grid-template-columns: 1.2fr 1fr; /* Desktop: ปฏิทินซ้าย Timeline ขวา */
-    gap: 30px;
+    grid-template-columns: 320px 1fr; /* ซ้าย Fix ขนาด, ขวายืดหยุ่น */
+    gap: 25px;
     align-items: start;
-    margin-top: 10px;
+    margin-top: 20px;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header ของหน้า */
+/* --- 2. Header Area --- */
 .sched-header-responsive {
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    padding: 15px 20px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2782,33 +2788,51 @@ body {
 .sched-date-control {
     display: flex;
     align-items: center;
-    background: #fff;
-    border: 2.5px solid #000;
-    border-radius: 10px;
+    background: var(--bg-soft);
+    border: 2px solid #000;
+    border-radius: 8px;
     padding: 4px;
-    box-shadow: 4px 4px 0 rgba(0,0,0,1);
+    gap: 5px;
 }
 
 .sched-current-date {
-    padding: 4px 15px;
-    font-weight: 800;
-    font-size: 1rem;
+    font-family: var(--font-main);
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: 0 15px;
     min-width: 180px;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .sched-nav-btn {
+    width: 36px;
+    height: 36px;
+    border: 2px solid #000;
     background: #fff;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: bold;
     border-radius: 6px;
-    transition: 0.2s;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
 }
-.sched-nav-btn:hover { background: var(--bg-soft); }
 
-/* Left Side: Calendar Area */
+.sched-nav-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+    background: var(--color-yellow);
+}
+
+.sched-nav-btn:active {
+    transform: translate(0,0);
+    box-shadow: none;
+}
+
+/* --- 3. Calendar Area (Left) --- */
 .sched-calendar-area {
     display: flex;
     flex-direction: column;
@@ -2816,8 +2840,11 @@ body {
 }
 
 .full-calendar {
-    padding: 20px;
+    background: #fff;
     border: 3px solid #000;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 8px 8px 0 rgba(0,0,0,1); /* เงาทึบแบบ Brutal */
 }
 
 .cal-grid-header {
@@ -2825,8 +2852,8 @@ body {
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
     font-weight: 900;
-    font-size: 0.8rem;
-    margin-bottom: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
     color: var(--text-muted);
 }
 
@@ -2844,23 +2871,57 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     border: 2px solid transparent;
-    transition: 0.2s;
+    transition: all 0.1s;
+    position: relative;
 }
-.cal-day:hover { background: var(--bg-soft); border-color: #000; }
-.cal-day.active { background: #000; color: #fff; transform: scale(1.1); box-shadow: 4px 4px 0 rgba(0,0,0,0.2); }
-.cal-day.has-event { border: 4px solid var(--text-muted); }
-.cal-day.is-today { color: var(--color-red); text-decoration: none; font-weight: 900; }
-.cal-day.prev-month { color: #ccc; cursor: default; }
 
-/* Activity Stickers Dock */
+.cal-day:hover {
+    background: var(--bg-soft);
+    border-color: #000;
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.cal-day.active {
+    background: #000;
+    color: #fff;
+    box-shadow: 3px 3px 0 var(--color-yellow);
+    transform: scale(1.1);
+    z-index: 2;
+    border: none;
+}
+
+.cal-day.is-today {
+    color: var(--color-red);
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+}
+
+.cal-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    width: 5px;
+    height: 5px;
+    background: var(--color-blue);
+    border-radius: 50%;
+}
+
+.cal-day.prev-month {
+    color: #ddd;
+    pointer-events: none;
+}
+
+/* --- 4. Stickers Dock --- */
 .sched-dock {
     background: #fff;
     border: 3px solid #000;
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+    text-align: center;
 }
 
 .sched-stickers-row {
@@ -2874,135 +2935,259 @@ body {
 .sched-sticker {
     background: #fff;
     border: 2px solid #000;
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 8px 14px;
+    border-radius: 30px;
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 800;
     cursor: grab;
-    box-shadow: 2px 2px 0 #ccc;
-    transition: 0.1s;
-}
-.sched-sticker:hover { transform: translateY(-2px); box-shadow: 4px 4px 0 var(--color-yellow); }
-
-.btn-action.add-task {
-    width: 100%;
-    border-style: dashed;
-    background: var(--bg-soft);
-    font-size: 0.8rem;
-    align-items: center;
+    box-shadow: 3px 3px 0 #ccc;
+    transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    user-select: none;
 }
 
-/* Right Side: Timeline Area */
-.sched-timeline-area {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.sched-sticker:hover {
+    transform: translateY(-3px) rotate(-2deg);
+    box-shadow: 5px 5px 0 var(--color-purple);
+    border-color: var(--color-purple);
+    color: var(--color-purple);
 }
 
-.sched-block-zone {
-    border: 2.5px solid #000;
-    border-radius: 10px;
-    background: #fff;
-    overflow: hidden;
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
-}
+.sched-sticker:active { cursor: grabbing; }
 
-.sched-block-header {
-    padding: 8px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #fff;
-    font-weight: 900;
-    border-bottom: 2.5px solid #000;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.sched-block-body {
-    min-height: 80px;
-    padding: 10px;
-    background-image: linear-gradient(#f0f0f0 1px, transparent 1px), linear-gradient(90deg, #f0f0f0 1px, transparent 1px);
-    background-size: 20px 20px;
-}
-
-.sched-placeholder { text-align: center; color: #bbb; font-size: 0.8rem; padding-top: 20px; }
-
-/* Event Cards */
-.sched-event-card {
-    background: #fff;
-    border: 2px solid #000;
-    border-left-width: 8px;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    position: relative;
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-    transition: 0.2s;
-}
-.sched-event-card:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
-
-.sched-title { font-weight: 700; font-size: 0.95rem; padding-right: 40px; }
-.sched-time-badge { font-size: 0.7rem; font-weight: bold; background: #eee; padding: 2px 6px; border-radius: 4px; }
-
-.sched-edit-btn, .sched-del-btn {
-    position: absolute; top: 5px; width: 22px; height: 22px;
-    border-radius: 50%; border: 1px solid #ddd; background: #fff;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: 0.2s;
-}
-.sched-event-card:hover .sched-edit-btn,
-.sched-event-card:hover .sched-del-btn { opacity: 1; }
-
-.sched-edit-btn { right: 32px; color: #666; }
-.sched-del-btn { right: 5px; color: #ccc; }
-.sched-edit-btn:hover { background: #000; color: #fff; }
-.sched-del-btn:hover { background: var(--color-red); color: #fff; }
-
-/* -------------------------------
-   Responsive Settings
----------------------------------*/
-
-/* Tablet (จอขนาดกลาง) */
-@media (max-width: 1100px) {
-    .sched-new-layout { grid-template-columns: 1fr; }
-    .sched-calendar-area { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-}
-
-/* Mobile (มือถือ) */
-@media (max-width: 700px) {
-    .sched-header-responsive { flex-direction: column; }
-    .sched-date-control { width: 100%; justify-content: space-between; }
-    .sched-calendar-area { display: flex; flex-direction: column; }
-    .sched-current-date { min-width: auto; flex: 1; }
-}
-
-
-/* --- Fix: ให้เห็นปุ่มแก้ไข/ลบ เสมอบนมือถือ --- */
-@media (max-width: 1024px) {
-    .sched-edit-btn, .sched-del-btn {
-        opacity: 1 !important; /* บังคับให้แสดงผลตลอดเวลา */
-        background: #fff; /* เพิ่มพื้นหลังให้ชัดขึ้น */
-        border: 1px solid #000;
-        box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-    }
-
-    /* ขยับปุ่มไม่ให้ซ้อนกัน */
-    .sched-edit-btn { right: 35px; }
-    .sched-del-btn { right: 5px; }
-}
-
-/* --- Fix: สถานะสติกเกอร์ที่ถูกเลือก (สำหรับระบบจิ้ม) --- */
+/* State: Selected (สำหรับโหมดจิ้มบนมือถือ) */
 .sched-sticker.is-selected {
     background: var(--color-yellow) !important;
     color: #000 !important;
-    border: 2px solid #000 !important;
-    transform: scale(1.1) rotate(-2deg);
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.3) !important;
+    border-color: #000 !important;
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 0 0 4px rgba(0,0,0,0.1) !important;
     z-index: 10;
 }
 
-/* เพิ่ม Effect ให้รู้ว่าช่องนี้จิ้มวางได้ */
-.sched-block-zone:active {
-    background-color: rgba(0,0,0,0.05);
-    border-color: var(--color-blue);
+.btn-action.add-task {
+    width: 100%;
+    border: 2px dashed #aaa;
+    background: transparent;
+    color: #888;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.btn-action.add-task:hover {
+    border-color: #000;
+    color: #000;
+    background: #fff;
+}
+
+/* --- 5. Timeline Area (Right) --- */
+.sched-timeline-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 50px;
+}
+
+.sched-block-zone {
+    border: 3px solid #000;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+.sched-block-zone:hover {
+    transform: translateX(-2px);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+}
+
+.sched-block-header {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff; /* Text color will be handled by contrast or black */
+    font-weight: 900;
+    border-bottom: 3px solid #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000; /* Force black text for brutalism readability */
+    /* background color comes from inline style */
+}
+
+.sched-block-body {
+    min-height: 100px;
+    padding: 15px;
+    background-color: #fff;
+    /* Grid Pattern Background */
+    background-image:
+        linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.sched-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 20px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    margin: 5px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+/* --- 6. Event Card (The Ticket Look) --- */
+.sched-event-card {
+    background: #fff;
+    border: 2px solid #000;
+    border-left-width: 10px !important; /* Thick indicator */
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    position: relative;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.sched-event-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+    z-index: 5;
+}
+
+.sched-time-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: #000;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.sched-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-top: 5px;
+    padding-right: 50px; /* Space for buttons */
+    line-height: 1.3;
+    color: var(--text-main);
+}
+
+/* Action Buttons (Edit/Delete) */
+.sched-edit-btn, .sched-del-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 2px solid #000;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: 0.2s;
+    opacity: 0; /* Hidden by default on desktop */
+}
+
+.sched-edit-btn { right: 45px; color: var(--text-main); }
+.sched-del-btn { right: 8px; color: var(--color-red); }
+
+.sched-event-card:hover .sched-edit-btn,
+.sched-event-card:hover .sched-del-btn {
+    opacity: 1;
+}
+
+.sched-edit-btn:hover { background: #000; color: #fff; }
+.sched-del-btn:hover { background: var(--color-red); color: #fff; }
+
+
+/* =========================================
+   7. RESPONSIVE MAGIC (Mobile & Tablet)
+   ========================================= */
+
+@media (max-width: 1024px) {
+    /* Stack Layout Vertical */
+    .sched-new-layout {
+        grid-template-columns: 1fr; /* 1 คอลัมน์เต็ม */
+        gap: 30px;
+    }
+
+    /* จัด Calendar Area ใหม่ */
+    .sched-calendar-area {
+        flex-direction: column-reverse; /* เอา Sticker ไว้บน ปฏิทินไว้ล่าง (สะดวกกว่าตอนเพิ่มงาน) */
+        gap: 20px;
+    }
+
+    /* Sticker Dock แนวนอน Scroll ได้ */
+    .sched-stickers-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .sched-sticker {
+        white-space: nowrap; /* ห้ามตัดคำ */
+        flex-shrink: 0;
+    }
+
+    /* ปฏิทิน: ซ่อนหัวตารางบางส่วนถ้าจอเล็กเกิน หรือลดขนาด Font */
+    .cal-day { font-size: 1rem; }
+    .full-calendar { padding: 15px; }
+}
+
+@media (max-width: 768px) {
+    /* Header Stack */
+    .sched-header-responsive {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .sched-date-control {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .sched-current-date {
+        min-width: auto;
+        font-size: 1rem;
+    }
+
+    /* Buttons Always Visible on Touch */
+    .sched-edit-btn, .sched-del-btn {
+        opacity: 1 !important; /* บังคับโชว์ตลอด */
+        width: 36px;
+        height: 36px;
+        top: 10px; /* ย้ายไปมุมบน */
+        transform: none;
+        background: #fff;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    }
+
+    .sched-del-btn { right: 10px; }
+    .sched-edit-btn { right: 55px; }
+
+    .sched-title {
+        font-size: 1rem;
+        margin-top: 15px; /* เว้นที่ให้ปุ่ม */
+        padding-right: 0;
+    }
+
+    .sched-block-body { padding: 10px; }
+
+    /* เพิ่มพื้นที่ด้านล่างให้ Scroll สบาย */
+    .sched-timeline-area { padding-bottom: 80px; }
 }
