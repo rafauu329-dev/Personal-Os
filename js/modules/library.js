@@ -57,7 +57,7 @@ export function renderLibrary(container) {
   const headerHTML = `
         <div class="u-flex-between u-flex-align-center u-mb-md">
             <div><div class="section-tag" style="background:var(--color-blue);"> My Library</div></div>
-            <button class="btn-action" onclick="App.handleAddLibrary()">+ NEW ITEM</button>
+            <button class="btn-action" onclick="App.handleAddLibrary()">+ เพิ่มสิ่งที่สนใจ </button>
         </div>
         ${statusControls}
         ${typeControls}

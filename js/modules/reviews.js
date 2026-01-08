@@ -28,7 +28,7 @@ export function renderReviews(container) {
         <textarea id="rv-q3" class="input-std" style="height:80px;"></textarea>
       </div>
 
-      <button id="save-review-btn" class="btn-main u-w-full">
+      <button id="save-review-btn" class="btn-action u-w-full">
         บันทึกทบทวน
       </button>
     </div>

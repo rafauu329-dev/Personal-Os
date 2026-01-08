@@ -357,6 +357,9 @@ body {
 .section-tag-finance { background: var(--color-orange); }
 .section-tag-habits { background: var(--color-green); }
 .section-tag-yellow { background: var(--color-yellow); }
+.section-tag-blue { background: var(--color-blue); }
+.section-tag-red { background: var(--color-red); }
+
 
 
 /* --- Buttons --- */
@@ -3190,4 +3193,403 @@ body {
 
     /* เพิ่มพื้นที่ด้านล่างให้ Scroll สบาย */
     .sched-timeline-area { padding-bottom: 80px; }
+}
+
+
+/* =========================================
+   PROJECTS: PRO GALLERY STYLE
+   ========================================= */
+
+/* 1. Grid Layout (Responsive Grid System) */
+.project-grid {
+    display: grid;
+    gap: 25px;
+}
+
+/* Active Projects: Desktop = 3 คอลัมน์ */
+.active-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* Showcase: Desktop = 2 คอลัมน์ใหญ่ๆ (โชว์ของ) */
+.showcase-grid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+
+/* 2. Pro Card Design */
+.project-card-pro {
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+}
+
+.project-card-pro:hover {
+    transform: translateY(-5px);
+    box-shadow: 10px 10px 0 rgba(0,0,0,1); /* เงาเข้มเมื่อ Hover */
+    border-color: #000;
+}
+
+/* Cover Image Area */
+.proj-cover {
+    width: 100%;
+    height: 200px;
+    background-color: #eee;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 3px solid #000;
+    position: relative;
+}
+
+.proj-cover.no-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: radial-gradient(#ccc 1px, transparent 1px);
+    background-size: 15px 15px;
+}
+.proj-cover.no-img span { font-size: 3rem; opacity: 0.5; }
+
+/* Content Body */
+.proj-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.status-pill {
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #fff;
+    border: 1px solid #000;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.proj-tools button {
+    background: transparent;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #bbb;
+    transition: 0.2s;
+}
+.proj-tools button:hover { color: #000; transform: scale(1.2); }
+
+.proj-title-pro {
+    font-size: 1.3rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-top: 5px;
+    color: var(--text-main);
+}
+
+.proj-cat-pro {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-purple);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.proj-desc-pro {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex: 1; /* ดัน Footer ลงล่าง */
+}
+
+/* Footer & Actions */
+.proj-footer-pro {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px dashed #eee;
+}
+
+.proj-stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+.proj-stack-row span {
+    font-size: 0.65rem;
+    background: #f4f4f4;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-family: monospace;
+}
+
+.proj-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.link-btn {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--color-blue);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-blue);
+}
+.link-btn:hover { background: var(--color-blue); color: #fff; }
+
+.check-btn {
+    background: var(--color-green);
+    color: #fff;
+    border: 2px solid #000;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #000;
+    transition: 0.1s;
+}
+.check-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #000; }
+
+.undo-btn {
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-weight: 900;
+}
+.undo-btn:hover { background: #000; color: #fff; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    border: 3px dashed #ccc;
+    border-radius: 12px;
+    color: #aaa;
+    font-weight: 700;
+    background: rgba(0,0,0,0.02);
+}
+
+/* =========================================
+   RESPONSIVE (IPAD & MOBILE)
+   ========================================= */
+
+/* iPad / Tablet (Landscape & Portrait) */
+@media (max-width: 1100px) {
+    /* ปรับ Grid ให้ยืดหยุ่น */
+    .active-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* ลดความกว้างขั้นต่ำลง */
+    }
+    .showcase-grid {
+        grid-template-columns: 1fr; /* Showcase เต็มจอใน iPad เพื่อให้เห็นรูปชัดๆ */
+    }
+
+    .proj-cover { height: 180px; } /* ลดความสูงรูปลงนิดหน่อย */
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .active-grid, .showcase-grid {
+        grid-template-columns: 1fr !important; /* เรียงเดี่ยวหมด */
+    }
+
+    .proj-title-pro { font-size: 1.2rem; }
+
+    .proj-footer-pro {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .proj-actions-row {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .check-btn {
+        flex: 1;
+        text-align: center;
+        margin-left: 15px;
+    }
+}
+
+/* =========================================
+   BADGE STYLES (TECH LABEL LOOK)
+   ========================================= */
+
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    min-width: 36px;
+    padding: 0 8px;
+    margin-left: 14px ;
+
+    /* ดีไซน์ทรงเหลี่ยมมุมมนน้อยๆ (Brutalist) */
+    border: 2px solid #000;
+    border-radius: 6px;
+
+    /* จัด Typography */
+    font-family: 'Courier New', Courier, monospace; /* ฟอนต์ตัวเลขแบบพิมพ์ดีด */
+    font-weight: 900;
+    font-size: 1rem;
+    line-height: 1;
+
+    /* เริ่มต้นเป็นขาวดำ (Default) */
+    background: #fff;
+    color: #000;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+
+    /* จัดตำแหน่ง */
+    vertical-align: middle;
+    transform: translateY(-1px);
+    transition: transform 0.2s;
+}
+
+/* Hover Effect นิดๆ ให้ดูมีมิติ */
+.count-badge:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* --- สีเฉพาะทาง (Variants) --- */
+
+/* สีเหลือง (สำหรับ Active Projects) */
+.count-badge.bg-yellow {
+    background-color: var(--color-yellow) !important;
+    color: #000 !important;
+    box-shadow: 3px 3px 0 #000; /* เงาดำทึบ ตัดกับเหลือง */
+}
+
+/* สีเขียว (สำหรับ Done/Hall of Fame) */
+.count-badge.bg-green {
+    background-color: var(--color-green) !important;
+    color: #fff !important;
+    box-shadow: 3px 3px 0 #000; /* เงาดำทึบ */
+    text-shadow: 1px 1px 0 #000; /* เพิ่มเงาตัวหนังสือให้อ่านง่าย */
+}
+
+/* สีดำ (สำหรับ Default/General) */
+.count-badge.bg-black {
+    background-color: #000 !important;
+    color: #fff !important;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+}
+
+
+/* =========================================
+   RESPONSIVE GOALS (LIFE MAP MOBILE)
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    /* 1. ปรับการ์ดเป้าหมายหลัก (Main Goal Card) */
+    /* เปลี่ยนจากซ้าย-ขวา เป็น บน-ล่าง */
+    .paper-card .u-flex-between[onclick*="App.toggleExpand"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+        position: relative;
+    }
+
+    /* 2. ปรับขนาดไอคอนให้เล็กลง และไม่เบียด */
+    .paper-card .u-flex-center[style*="width:70px"] {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 2rem !important;
+        min-width: 50px; /* ป้องกันไอคอนบี้ */
+        border-radius: 8px !important;
+    }
+
+    /* 3. ปรับส่วนชื่อเป้าหมาย (Title) */
+    .paper-card .u-text-xl {
+        font-size: 1.3rem !important; /* ลดขนาดฟอนต์หัวข้อ */
+        margin-top: 5px;
+    }
+
+    /* 4. ย้ายปุ่ม Delete และ ตัวกดขยาย [+ / -] ไปไว้ด้านล่างของ Header */
+    .paper-card .u-text-right {
+        width: 100%;
+        display: flex;
+        justify-content: space-between; /* ปุ่มซ้าย ขวา */
+        align-items: center;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px dashed #eee; /* ขีดเส้นแบ่งให้ดูเป็นระเบียบ */
+    }
+
+    /* ปรับปุ่มลบให้ดูแลง่ายขึ้น */
+    .paper-card .u-text-right .btn-action {
+        width: auto;
+        padding: 6px 12px !important;
+    }
+
+    /* ตัวกดขยาย [+ / -] */
+    .paper-card .u-text-right div[style*="font-family:monospace"] {
+        margin-top: 0 !important;
+        font-size: 1.5rem !important; /* ใหญ่ขึ้นให้จิ้มง่าย */
+    }
+
+    /* 5. ปรับ Topic Item (หัวข้อหลัก) */
+    .topic-item {
+        padding-left: 10px !important; /* ลด indent บนมือถือ */
+    }
+
+    .topic-item .u-flex-between {
+        flex-wrap: wrap; /* ยอมให้ปุ่มตกบรรทัดถ้าชื่อยาว */
+        gap: 10px;
+    }
+
+    .topic-item .u-text-main {
+        font-size: 1rem !important;
+        width: 100%; /* ชื่อเต็มบรรทัด */
+        margin-bottom: 5px;
+    }
+
+    /* ปุ่มเพิ่มเรื่องย่อย / ลบ Topic */
+    .topic-item .u-gap-xs {
+        margin-left: auto; /* ดันปุ่มไปขวาสุด */
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* 6. ปรับ Subtopic (เรื่องย่อย) */
+    .subtopic-item {
+        margin-left: 0 !important; /* ลด indent */
+        padding: 10px;
+        background: #fafafa;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+
+    .subtopic-item .u-flex-between {
+        align-items: flex-start;
+    }
+
+    .subtopic-item .u-font-bold {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        word-break: break-word; /* ตัดคำถ้ายาวเกิน */
+        padding-right: 10px;
+    }
+
+    /* 7. ปรับ Checkbox Task (งานย่อย) */
+    label.u-flex-align-center {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    input[type="checkbox"] {
+        min-width: 20px; /* ขยาย Checkbox ให้จิ้มง่าย */
+        min-height: 20px;
+    }
 }

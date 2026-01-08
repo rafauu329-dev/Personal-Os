@@ -77,8 +77,8 @@ export function renderMoney(container) {
   container.innerHTML = `
         <div class="u-flex-align-center u-mb-lg">
             ${renderBackBtn()}
-            <div class="section-tag bg-danger" style="margin:0;">Money Manager</div>
-            <button onclick="App.setBudget()" style="margin-left:auto; font-size:0.75rem; font-weight:bold; background:#000; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">SET BUDGET</button>
+            <div class="section-tag section-tag-finance bg-danger" style="margin:0;">Money Manager</div>
+            <button class="btn-action" onclick="App.setBudget()" style="margin-left:auto; font-size:0.75rem; font-weight:bold; background:#fff; color:#000; border: 4px solid var(--color-orange); padding:6px 12px; border-radius:4px; cursor:pointer;"> ตั้งงบประมาณรายเดือน</button>
         </div>
 
         <div class="balance-card">
@@ -87,27 +87,27 @@ export function renderMoney(container) {
                balance >= 0 ? "#33ff00" : "#ff3333"
              };">${balance.toLocaleString()} ฿</div>
              <div class="u-flex-center u-mt-md u-pt-md" style="gap:30px; border-top:1px dashed rgba(255,255,255,0.2);">
-                <div><div style="font-size:0.75rem; opacity:0.7;">INCOME</div><div style="font-weight:700; color:#33ff00;">+${income.toLocaleString()}</div></div>
-                <div><div style="font-size:0.75rem; opacity:0.7;">EXPENSE</div><div style="font-weight:700; color:#ff3333;">-${expense.toLocaleString()}</div></div>
+                <div><div style="font-size:0.75rem; opacity:0.7;"> รายรับ</div><div style="font-weight:700; color:#33ff00;">+${income.toLocaleString()}</div></div>
+                <div><div style="font-size:0.75rem; opacity:0.7;"> รายจ่าย</div><div style="font-weight:700; color:#ff3333;">-${expense.toLocaleString()}</div></div>
             </div>
             <div class="u-mt-md" style="background:#333; height:10px; border:1px solid #555; overflow:hidden; position:relative;">
                 <div style="position:absolute; left:0; top:0; height:100%; width:${budgetPercent}%; background:${
     budgetPercent > 90 ? "#ff3333" : "#33ff00"
   }; box-shadow: 0 0 5px ${budgetPercent > 90 ? "#ff3333" : "#33ff00"};"></div>
             </div>
-            <div class="u-text-right u-text-xs u-mt-xs" style="opacity:0.6; font-family:monospace;">USAGE: ${Math.round(
+            <div class="u-text-right u-text-xs u-mt-xs" style="opacity:0.6; font-family:monospace;"> ใช้ไปแล้ว: ${Math.round(
               budgetPercent
-            )}% // LIMIT: ${budget.toLocaleString()}</div>
+            )}% // งบสูงสุด: ${budget.toLocaleString()}</div>
         </div>
 
         <div class="paper-card u-mb-lg">
             <div class="money-type-toggle">
                 <button class="type-btn-expense ${
                   moneyTempState.type === "expense" ? "active expense" : ""
-                }" onclick="App.setMoneyType('expense')">EXPENSE (-)</button>
+                }" onclick="App.setMoneyType('expense')">รายจ่าย (-)</button>
                 <button class="type-btn-income ${
                   moneyTempState.type === "income" ? "active income" : ""
-                }" onclick="App.setMoneyType('income')">INCOME (+)</button>
+                }" onclick="App.setMoneyType('income')">รายรับ (+)</button>
             </div>
 
             <div class="u-mb-md" style="position:relative;">
@@ -130,24 +130,24 @@ export function renderMoney(container) {
                   .join("")}
                 <div class="cat-btn" onclick="App.handleAddMoneyCategory()" style="border:1px dashed #ccc; opacity:0.7;">
                     <div class="u-text-lg">➕</div>
-                    <div>ADD</div>
+                    <div> เพิ่มเติม </div>
                 </div>
             </div>
             <div class="input-row">
-                <input type="text" id="money-note" class="input-std" placeholder="Note (Optional)..." value="${
+                <input type="text" id="money-note" class="input-std" placeholder="บันทึกข้อความเพิ่มเติม........." value="${
                   moneyTempState.tempNote
                 }" oninput="App.moneyTempState.tempNote = this.value">
                 <button class="btn-action" onclick="App.addMoneyTransaction()" style="background:${
                   moneyTempState.type === "expense"
                     ? "var(--danger)"
                     : "var(--success)"
-                }; min-width:100px; color: var(--color-black);"> SAVE </button>
+                }; min-width:100px; color: var(--color-black);"> บันทึก </button>
             </div>
         </div>
 
         <div class="u-font-black u-mb-sm u-text-muted u-flex-between">
-             <span style="font-weight:bold; letter-spacing:1px;">RECENT TRANSACTIONS</span>
-             <span class="u-text-sm" style="font-weight:normal;">(Last 10)</span>
+             <span style="font-weight:bold; letter-spacing:1px;">ประวัติรายการล่าสุด</span>
+             <span class="u-text-sm" style="font-weight:normal;"> 10 รายการล่าสุด</span>
         </div>
         <ul class="receipt-list">
             ${data.transactions
@@ -187,7 +187,7 @@ export function renderMoney(container) {
         </ul>
         ${
           data.transactions.length === 0
-            ? `<div class="u-text-center u-p-lg" style="color:#aaa;">No transactions yet.</div>`
+            ? `<div class="u-text-center u-p-lg" style="color:#aaa;"> ยังไม่มีบันทึกรายการ...</div>`
             : ""
         }
     `;

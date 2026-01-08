@@ -49,8 +49,8 @@ export function renderHabitTracker(container) {
   // 3. Render HTML
   container.innerHTML = `
         <div class="u-flex-between u-flex-align-center u-mb-lg">
-             <div class="u-flex-align-center">${renderBackBtn()}<div class="section-tag u-text-main" style="margin:0;">Habit Tracker</div></div>
-             <button class="btn-action" onclick="App.handleAddHabitModal()" style="font-size:0.85rem; font-weight:600;">+ New Habit</button>
+             <div class="u-flex-align-center">${renderBackBtn()}<div class="section-tag section-tag-habits u-text-main" style="margin:0;">Habit Tracker</div></div>
+             <button class="btn-action" onclick="App.handleAddHabitModal()" style="font-size:0.85rem; font-weight:600;">+ สร้างนิสัยใหม่</button>
         </div>
         <div class="habit-grid" style="grid-template-columns: 1fr;">
             ${appState.tools.habits
@@ -75,7 +75,7 @@ export function renderHabitTracker(container) {
                             ? "text-decoration: line-through; color: var(--text-muted);"
                             : ""
                         }">${h.name}</span>
-                        <span class="u-text-sm u-text-muted u-mt-xs">Current Streak: <b style="color:${cardColor}">${displayStreak}</b> days</span>
+                        <span class="u-text-sm u-text-muted u-mt-xs"> ความต่อเนื่อง: <b style="color:${cardColor}">${displayStreak}</b> วัน</span>
                     </div>
                     <div class="u-flex-align-center u-gap-md">
                         <button onclick="App.toggleHabit('${
@@ -85,7 +85,7 @@ export function renderHabitTracker(container) {
                 }; background: ${isDone ? cardColor : "transparent"}; color: ${
                   isDone ? "#fff" : "var(--text-muted)"
                 }; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
-                            ${isDone ? "Completed" : "Check In"}
+                            ${isDone ? "อย่างเจ๋งงง!" : "เช็คชื่อ"}
                         </button>
                         <button onclick="App.deleteHabit('${
                           h.id

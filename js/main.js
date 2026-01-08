@@ -20,6 +20,7 @@ import * as JournalModule from "./modules/journal.js";
 import * as ExerciseModule from "./modules/exercise.js";
 import * as ReviewsModule from "./modules/reviews.js";
 import * as SettingsModule from "./modules/settings.js";
+import * as ProjectsModule from "./modules/projects.js";
 import { MOCK_DATA } from "./mockdata.js";
 
 // 3. Construct Global App
@@ -217,6 +218,9 @@ const App = {
       case "reviews":
         ReviewsModule.renderReviews(container);
         break;
+      case "projects":
+        ProjectsModule.renderProjects(container);
+        break;
       case "settings":
         SettingsModule.renderSettings(container);
         break;
@@ -319,6 +323,7 @@ const App = {
   ...ExerciseModule,
   ...ReviewsModule,
   ...SettingsModule,
+  ...ProjectsModule,
   loadMockData: SettingsModule.loadMockData,
 };
 

@@ -116,7 +116,7 @@ export function renderJournal(container) {
 
   // Render HTML หลัก
   container.innerHTML = `
-        <div class="u-flex-align-center u-mb-lg">${renderBackBtn()}<div class="section-tag bg-blue" style="margin:0;">Daily Log</div></div>
+        <div class="u-flex-align-center u-mb-lg">${renderBackBtn()}<div class="section-tag section-tag-blue " style="margin:0;">Daily Log</div></div>
         <div class="journal-layout">
             <div class="paper-card jor-editor-wrapper">
                 <div class="jor-editor-header">
@@ -129,7 +129,7 @@ export function renderJournal(container) {
                 </div>
                 <div class="jor-divider"></div>
                 <div class="u-mb-md">
-                    <label class="u-text-xs u-font-bold u-text-muted u-mb-xs u-block">MOOD CHECK</label>
+                    <label class="u-text-xs u-font-bold u-text-muted u-mb-xs u-block">- MOOD CHECK</label>
                     <input type="hidden" id="j-mood-val" value="${displayMood}">
                     <div class="jor-mood-row">
                         ${["🤩", "😊", "🙂", "😐", "😔", "😫", "😡"]
@@ -144,9 +144,9 @@ export function renderJournal(container) {
                 </div>
                 <textarea id="j-text" class="jor-textarea-clean" placeholder="เขียนเรื่องราวของคุณที่นี่..." oninput="App.saveTempInputs()">${displayText}</textarea>
                 <div class="jor-extras-box">
-                    <div class="u-mb-md"><label class="u-text-xs u-font-bold u-text-muted">✨ GRATITUDE / HIGHLIGHT</label><input type="text" id="j-gratitude" class="input-line" placeholder="เรื่องดีๆ วันนี้..." value="${displayGratitude}" oninput="App.saveTempInputs()"></div>
+                    <div class="u-mb-md"><label class="u-text-xs u-font-bold u-text-muted">- GRATITUDE / HIGHLIGHT</label><input type="text" id="j-gratitude" class="input-line" placeholder="เรื่องดีๆ วันนี้..." value="${displayGratitude}" oninput="App.saveTempInputs()"></div>
                     <div class="u-mb-md">
-                        <label class="u-text-xs u-font-bold u-text-muted u-mb-xs u-block">🏷️ TAGS</label>
+                        <label class="u-text-xs u-font-bold u-text-muted u-mb-xs u-block">- TAGS</label>
                         <div class="u-flex u-gap-xs u-flex-wrap">
                              ${allTagsDisplay
                                .map(
@@ -164,9 +164,9 @@ export function renderJournal(container) {
                     </div>
                     <label class="jor-pin-option"><input type="checkbox" id="j-featured" style="accent-color:var(--color-blue);" ${
                       editData.isFeatured ? "checked" : ""
-                    }><span>📌 ปักหมุดหน้า Dashboard (Manifesto)</span></label>
+                    }><span> ปักหมุดหน้า Dashboard</span></label>
                 </div>
-                <button class="btn-main u-w-full u-mt-md bg-black u-text-white" onclick="App.saveJournal()">${
+                <button class="btn-action u-w-full u-mt-md bg-black u-text-white" onclick="App.saveJournal()">${
                   journalState.isEditing ? "อัปเดต" : "บันทึก"
                 }</button>
             </div>

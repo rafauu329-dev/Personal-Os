@@ -72,7 +72,7 @@ export function renderExercise(container) {
   }
 
   container.innerHTML = `
-        <div class="ex-header">${renderBackBtn()}<div class="section-tag bg-red" style="margin:0;">Active Life</div></div>
+        <div class="ex-header">${renderBackBtn()}<div class="section-tag section-tag-red" style="margin:0;">Active Life</div></div>
 
         <div class="paper-card ex-dash-card" style="padding-bottom: 25px;">
              <div class="ex-dash-content" style="margin-bottom:5px;">
