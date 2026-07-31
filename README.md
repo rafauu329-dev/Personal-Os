@@ -170,21 +170,6 @@ Optimized for:
 
 ---
 
-## 💡 Future Improvements
-
-- Dark / light theme switching
-- Drag-and-drop widgets
-- Calendar integrations
-- Better analytics dashboard
-- Persistent storage enhancements
-- Authentication system
-- Cloud sync
-- Export / backup data
-- Custom user themes
-- Notification reminders
-- AI productivity assistant
-
----
 
 ## 📌 Notes
 
